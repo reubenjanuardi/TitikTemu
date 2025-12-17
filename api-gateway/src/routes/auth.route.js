@@ -1,23 +1,30 @@
 const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { buildProxy } = require('../proxy/service.proxy');
 const { verifyToken } = require('../middleware/auth.middleware');
 
 const router = express.Router();
 
-const authProxy = createProxyMiddleware({
-  target: process.env.AUTH_SERVICE_URL,
-  changeOrigin: true,
-  pathRewrite: {
-    '^/api/auth': '/auth'
-  },
-});
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
 
-// Public routes
-router.post('/register', authProxy);
-router.post('/login', authProxy);
+/* =========================
+   PUBLIC ROUTES
+========================= */
+router.post(
+  '/register',
+  buildProxy('/api/auth', `${AUTH_SERVICE_URL}/auth`)
+);
 
-// Protected routes
+router.post(
+  '/login',
+  buildProxy('/api/auth', `${AUTH_SERVICE_URL}/auth`)
+);
+
+/* =========================
+   PROTECTED ROUTES
+========================= */
 router.use(verifyToken);
-router.use(authProxy);
+router.use(
+  buildProxy('/api/auth', `${AUTH_SERVICE_URL}/auth`)
+);
 
 module.exports = router;
