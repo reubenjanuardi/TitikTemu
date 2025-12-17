@@ -1,0 +1,19 @@
+// Constants
+module.exports = {
+  API_TIMEOUT: 5000,
+  MAX_RETRY: 3,
+  
+  EVENT_STATUS: {
+    DRAFT: 'DRAFT',
+    PUBLISHED: 'PUBLISHED',
+    ONGOING: 'ONGOING',
+    COMPLETED: 'COMPLETED',
+    CANCELLED: 'CANCELLED'
+  },
+  
+  USER_ROLES: {
+    ADMIN: 'ADMIN',
+    ORGANIZER: 'ORGANIZER',
+    PARTICIPANT: 'PARTICIPANT'
+  }
+};

@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - EVENT_SERVICE_URL=http://event-service:3002
+      - VENUE_SERVICE_URL=http://venue-consumer-service:3003
+      - ATTENDANCE_SERVICE_URL=http://attendance-service:3004
+    depends_on:
+      - auth-service
+      - event-service
+      - venue-consumer-service
+      - attendance-service
+    networks:
+      - titiktemu-network
+
+  auth-service:
+    build: ./services/auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_PATH=./database/auth.db.sqlite
+      - JWT_SECRET=your-secret-key-here
+    networks:
+      - titiktemu-network
+
+  event-service:
+    build: ./services/event-service
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - PORT=3002
+      - DATABASE_PATH=./database/event.db.sqlite
+    networks:
+      - titiktemu-network
+
+  venue-consumer-service:
+    build: ./services/venue-consumer-service
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - PORT=3003
+      - VENUE_SERVICE_URL=http://localhost:5000
+    networks:
+      - titiktemu-network
+
+  attendance-service:
+    build: ./services/attendance-service
+    ports:
+      - "3004:3004"
+    environment:
+      - NODE_ENV=development
+      - PORT=3004
+      - DATABASE_PATH=./database/attendance.db.sqlite
+    networks:
+      - titiktemu-network
+
+networks:
+  titiktemu-network:
+    driver: bridge
